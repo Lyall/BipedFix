@@ -1,5 +1,5 @@
 # BipedFix
-This BepinEx mod for Biped adds support for:
+This BepinEx mod for the game Biped adds support for:
 - Setting arbitrary resolutions such as ultrawide.
 - Unlocked FPS and forcing vsync.
 
@@ -10,7 +10,9 @@ Todo
 Todo
 
 ## Known Issues
-The current implementation of the fix for the save dialog is imperfect and results in the "Saving" dialog being misaligned.
+Please report any issues you see and I'll do my best to fix them.
+
+- The current implementation of the fix for the save dialog is imperfect and results in the "Saving" dialog being misaligned.
 
 ## Screenshots
 

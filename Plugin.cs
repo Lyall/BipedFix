@@ -34,12 +34,12 @@ namespace BipedFix
 
             DesiredResolutionX = Config.Bind("General",
                                 "ResolutionWidth",
-                                 3440f,
+                                 (float)Display.main.systemWidth, // Set default to display width so we don't leave an unsupported resolution as default
                                 "Set desired resolution width.");
 
             DesiredResolutionY = Config.Bind("General",
                                 "ResolutionHeight",
-                                1440f,
+                                (float)Display.main.systemHeight, // Set default to display height so we don't leave an unsupported resolution as default
                                 "Set desired resolution height.");
 
             Fullscreen = Config.Bind("General",
