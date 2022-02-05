@@ -1,7 +1,8 @@
 # BipedFix
 This BepinEx mod for the game Biped adds support for:
-- Setting arbitrary resolutions such as ultrawide.
+- Playing the game in any Ultrawide aspect ratios such as 21:9, 32:9 or even higher.
 - Unlocked FPS and forcing vsync.
+- Setting an arbitrary resolution.
 
 ## Installation
 - Run once to generate a config file. 
