@@ -7,9 +7,6 @@ This BepinEx mod for the game Biped adds support for:
 - Run once to generate a config file. 
 - Edit config file to adjust the various settings of the mod.
 
-## Configuration
-Todo
-
 ## Known Issues
 Please report any issues you see and I'll do my best to fix them.
 
