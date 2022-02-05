@@ -4,7 +4,8 @@ This BepinEx mod for the game Biped adds support for:
 - Unlocked FPS and forcing vsync.
 
 ## Installation
-Todo
+- Run once to generate a config file. 
+- Edit config file to adjust the various settings of the mod.
 
 ## Configuration
 Todo
