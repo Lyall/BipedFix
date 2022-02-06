@@ -2,11 +2,17 @@
 This BepinEx plugin for the game Biped adds support for:
 - Playing the game in any ultrawide aspect ratios such as 21:9, 32:9 or even higher.
 - Unlocked FPS and forcing vsync.
+- Fixing various issues caused by running at unsupported resolutions.
 - Setting an arbitrary resolution.
 
 ## Installation
-- Run once to generate a config file. 
-- Edit config file to adjust the various settings of the mod.
+- Grab the latest x64 version of BepinEx from https://github.com/BepInEx/BepInEx/releases
+- Extract the BepinEx zip to the main Biped game directory (for example - "steamapps/common/Biped").
+- Extract BipedFix's latest release zip in to the same Biped game directory.
+- Run Biped once to generate a config file located at Biped/BepinEx/config/BipedFix.cfg
+
+## Configuration
+- See the generated BipedFix.cfg to adjust various aspects of the plugin.
 
 ## Known Issues
 Please report any issues you see and I'll do my best to fix them.
