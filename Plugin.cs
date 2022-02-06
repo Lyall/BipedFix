@@ -50,27 +50,27 @@ namespace BipedFix
             HintBubbleFix = Config.Bind("Tweaks",
                                 "HintBubbleFix",
                                 true,
-                                "Fixes misaligned hint bubbles at non 16:9 aspect ratios.");
+                                "Fixes misaligned hint bubbles at wider than 16:9 aspect ratios.");
 
             CutsceneFix = Config.Bind("Tweaks",
                                 "CutsceneFix",
                                 true,
-                                "Fixes cutscene letterboxing at non 16:9 aspect ratios.");
+                                "Fixes cutscene letterboxing wider at wider than 16:9 aspect ratios.");
             
             SavingDialogFix = Config.Bind("Tweaks",
                                 "SavingDialogFix",
                                 true,
-                                "Fixes saving dialog box at non 16:9 aspect ratios.");
+                                "Fixes saving dialog box at wider than 16:9 aspect ratios.");
 
             TitleVideoFix = Config.Bind("Tweaks",
                                 "TitleVideoAspectRatioFix",
                                 true,
-                                "Fixes title video aspect ratio.");
+                                "Fixes title video aspect ratio at wider than 16:9 aspect ratios.");
 
             GameMenuVideoFix = Config.Bind("Tweaks",
                                 "GameMenuVideoAspectRatioFix",
                                 true,
-                                "Fixes game menu video aspect ratio.");
+                                "Fixes game menu video aspect ratio at wider than 16:9 aspect ratios.");
 
             UnlockedFPS = Config.Bind("General",
                                 "UnlockedFPS",
@@ -139,11 +139,11 @@ namespace BipedFix
         [HarmonyPostfix]
         public static void UpdateHintReferenceResolution(Biped.HintBubbleDialogHandler __instance)
         {
-            if (Plugin.HintBubbleFix.Value && AspectMultiplier > 1)
+            if (Plugin.HintBubbleFix.Value)
             {
                 var canvasScaler = GameObject.Find("DialogCanvas(Clone)").GetComponent<CanvasScaler>();
                 canvasScaler.referenceResolution = NewReferenceResolution;
-                Plugin.Log.LogInfo($"Changed hint bubble canvas reference resolution to {canvasScaler.referenceResolution}");
+                Plugin.Log.LogInfo($"Changed hint bubble canvas reference resolution to wide {canvasScaler.referenceResolution}");  
             }
         }
 
@@ -152,12 +152,12 @@ namespace BipedFix
         [HarmonyPostfix]
         public static void AdjustLetterboxing()
         {
-            if (Plugin.CutsceneFix.Value && AspectMultiplier > 1)
+            if (Plugin.CutsceneFix.Value)
             {
                 var CinematicUI = GameObject.Find("GameMainUI/GamingUICoopMode/CinematicUI").GetComponent<RectTransform>();
                 CinematicUI.localScale = new Vector3(1 * AspectMultiplier, 1, 1); // Multiply letterbox 
                 Plugin.Log.LogInfo($"Cutscene local scale set to = {CinematicUI.localScale}");
-            }
+            }    
         }
 
         // Cull BG_Saving and BG_Saved when they are "offscreen". Right now this doesn't address the positioning of prefab_saving which would be a better fix.
@@ -165,7 +165,7 @@ namespace BipedFix
         [HarmonyPostfix]
         public static void CullSavingUI()
         {
-            if (Plugin.SavingDialogFix.Value && AspectMultiplier > 1)
+            if (Plugin.SavingDialogFix.Value)
             {
                 var BG_Saving = GameObject.Find("GameMainUI/GamingUICoopMode/Saving/Prefab_Saving/BG_Saving").GetComponent<CanvasRenderer>();
                 BG_Saving.cull = true;
@@ -187,7 +187,7 @@ namespace BipedFix
         [HarmonyPostfix]
         public static void TitleVideoAR()
         {
-            if (Plugin.TitleVideoFix.Value && AspectMultiplier > 1)
+            if (Plugin.TitleVideoFix.Value)
             {
                 var TitleVideoPlayer = GameObject.Find("TitleVideo/Player").GetComponent<RectTransform>();
                 TitleVideoPlayer.localScale = new Vector3(1 / AspectMultiplier, 1, 1);
@@ -200,12 +200,12 @@ namespace BipedFix
         [HarmonyPostfix]
         public static void GameMenuVideoAR()
         {
-            if (Plugin.GameMenuVideoFix.Value && AspectMultiplier > 1)
+            if (Plugin.GameMenuVideoFix.Value)
             {
                 var GameMenuVideo = GameObject.Find("GameMainUI/VideoUI/Player").GetComponent<RectTransform>();
                 GameMenuVideo.localScale = new Vector3(1 / AspectMultiplier, 1, 1);
                 Plugin.Log.LogInfo($"Game menu video local scale set to = {GameMenuVideo.localScale}");
-            }
+            }   
         }
     }
 }
