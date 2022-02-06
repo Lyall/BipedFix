@@ -14,11 +14,7 @@ namespace BipedFix
     {
         public static ManualLogSource Log;
 
-        public static ConfigEntry<bool> HintBubbleFix;
-        public static ConfigEntry<bool> CutsceneFix;
-        public static ConfigEntry<bool> GameUIFix;
-        public static ConfigEntry<bool> TitleVideoFix;
-        public static ConfigEntry<bool> GameMenuVideoFix;
+        public static ConfigEntry<bool> UIFixes;
         public static ConfigEntry<int> UnlockedFPS;
         public static ConfigEntry<bool> ToggleVSync;
         public static ConfigEntry<bool> Fullscreen;
@@ -47,30 +43,10 @@ namespace BipedFix
                                 true,
                                 "Set to true for fullscreen or false for windowed.");
 
-            HintBubbleFix = Config.Bind("Tweaks",
-                                "HintBubbleFix",
+            UIFixes = Config.Bind("Tweaks",
+                                "UIFixes",
                                 true,
-                                "Fixes misaligned hint bubbles at wider than 16:9 aspect ratios.");
-
-            CutsceneFix = Config.Bind("Tweaks",
-                                "CutsceneFix",
-                                true,
-                                "Fixes cutscene letterboxing wider at wider than 16:9 aspect ratios.");
-            
-            GameUIFix = Config.Bind("Tweaks",
-                                "GameUIFix",
-                                true,
-                                "Fixes game UI at wider than 16:9 aspect ratios.");
-
-            TitleVideoFix = Config.Bind("Tweaks",
-                                "TitleVideoAspectRatioFix",
-                                true,
-                                "Fixes title video aspect ratio at wider than 16:9 aspect ratios.");
-
-            GameMenuVideoFix = Config.Bind("Tweaks",
-                                "GameMenuVideoAspectRatioFix",
-                                true,
-                                "Fixes game menu video aspect ratio at wider than 16:9 aspect ratios.");
+                                "Fixes user interface issues at wider than 16:9 aspect ratios.");
 
             UnlockedFPS = Config.Bind("General",
                                 "UnlockedFPS",
@@ -140,7 +116,7 @@ namespace BipedFix
         [HarmonyPostfix]
         public static void UpdateHintReferenceResolution(Biped.HintBubbleDialogHandler __instance)
         {
-            if (Plugin.HintBubbleFix.Value)
+            if (Plugin.UIFixes.Value)
             {
                 var canvasScaler = GameObject.Find("DialogCanvas(Clone)").GetComponent<CanvasScaler>();
                 canvasScaler.referenceResolution = NewReferenceResolution;
@@ -148,24 +124,38 @@ namespace BipedFix
             }
         }
 
-        // Fix game UI
-        [HarmonyPatch(typeof(Biped.GameMainUI), "Awake")]
+        // Fix game main UI
+        [HarmonyPatch(typeof(Biped.BipedGameUI), nameof(Biped.BipedGameUI.Start))]
         [HarmonyPostfix]
-        public static void UpdateGameMainUIReferenceResolution(Biped.GameMainUI __instance)
+        public static void UpdateGameMainUIReferenceResolution()
         {
-            if (Plugin.GameUIFix.Value)
+            if (Plugin.UIFixes.Value)
             {
                 var canvasScaler = GameObject.Find("GameMainUI").GetComponent<CanvasScaler>();
                 canvasScaler.referenceResolution = NewReferenceResolution;
                 Plugin.Log.LogInfo($"Changed game UI reference resolution to {canvasScaler.referenceResolution}");
             }
         }
+
+        // WIP Move saving prefab (this is a bad fix but it's better than default)
+        [HarmonyPatch(typeof(Biped.SavingNode), "Start")]
+        [HarmonyPostfix]
+        public static void MoveSavingUI()
+        {
+            if (Plugin.UIFixes.Value)
+            {
+                var Prefab_Saving = GameObject.Find("GameMainUI/GamingUICoopMode/Saving/Prefab_Saving").GetComponent<RectTransform>();
+                Prefab_Saving.localPosition = new Vector3(749 / AspectMultiplier, -104, 0);
+                Plugin.Log.LogInfo($"Saving local pos changed to = {Prefab_Saving.localPosition}");
+            }
+        }
+
         // Fix cinematic letterboxing
         [HarmonyPatch(typeof(Biped.GameMainUI), "Awake")]
         [HarmonyPostfix]
         public static void AdjustLetterboxing()
         {
-            if (Plugin.CutsceneFix.Value)
+            if (Plugin.UIFixes.Value)
             {
                 var CinematicUI = GameObject.Find("GameMainUI/GamingUICoopMode/CinematicUI").GetComponent<RectTransform>();
                 CinematicUI.localScale = new Vector3(1 * AspectMultiplier, 1, 1); // Multiply letterbox 
@@ -173,25 +163,16 @@ namespace BipedFix
             }    
         }
 
-        // Cull BG_Saving and BG_Saved when they are "offscreen". Right now this doesn't address the positioning of prefab_saving which would be a better fix.
-        [HarmonyPatch(typeof(Biped.SavingNode), "Start")]
+        // Fix UI mask
+        [HarmonyPatch(typeof(Biped.GameMainUI), "Awake")]
         [HarmonyPostfix]
-        public static void CullSavingUI()
+        public static void AdjustUIMask()
         {
-            if (Plugin.SavingDialogFix.Value)
+            if (Plugin.UIFixes.Value)
             {
-                var BG_Saving = GameObject.Find("GameMainUI/GamingUICoopMode/Saving/Prefab_Saving/BG_Saving").GetComponent<RectTransform>();
-                BG_Saving.localPosition = new Vector3(-100, 0, 0);   
-                var Img_Circle_Big = GameObject.Find("GameMainUI/GamingUICoopMode/Saving/Prefab_Saving/Img_Circle_Big").GetComponent<RectTransform>();
-                Img_Circle_Big.localPosition = new Vector3(1 * AspectMultiplier, AspectMultiplier, 0); ;
-                var Img_Circle_Small = GameObject.Find("GameMainUI/GamingUICoopMode/Saving/Prefab_Saving/Img_Circle_Small").GetComponent<RectTransform>();
-                Img_Circle_Small.localPosition = new Vector3(1 * AspectMultiplier, AspectMultiplier, 0); ;
-                var Img_CircleBG = GameObject.Find("GameMainUI/GamingUICoopMode/Saving/Prefab_Saving/Img_CircleBG").GetComponent<RectTransform>();
-                Img_CircleBG.localPosition = new Vector3(1 * AspectMultiplier, AspectMultiplier, 0); ;
-                var Text_Saved = GameObject.Find("GameMainUI/GamingUICoopMode/Saving/Prefab_Saving/Text_Saved").GetComponent<RectTransform>();
-                Text_Saved.localPosition = new Vector3(1 * AspectMultiplier, AspectMultiplier, 0); ;
-
-                Plugin.Log.LogInfo($"Saving icons culled = ");
+                var UI_Mask = GameObject.Find("GameMainUI/GamingUICoopMode/UI_Mask").GetComponent<RectTransform>();
+                UI_Mask.localScale = new Vector3(1 * AspectMultiplier, 1, 1);
+                Plugin.Log.LogInfo($"UI_Mask local scale set to = {UI_Mask.localScale}");
             }
         }
 
@@ -200,7 +181,7 @@ namespace BipedFix
         [HarmonyPostfix]
         public static void TitleVideoAR()
         {
-            if (Plugin.TitleVideoFix.Value)
+            if (Plugin.UIFixes.Value)
             {
                 var TitleVideoPlayer = GameObject.Find("TitleVideo/Player").GetComponent<RectTransform>();
                 TitleVideoPlayer.localScale = new Vector3(1 / AspectMultiplier, 1, 1);
@@ -213,7 +194,7 @@ namespace BipedFix
         [HarmonyPostfix]
         public static void GameMenuVideoAR()
         {
-            if (Plugin.GameMenuVideoFix.Value)
+            if (Plugin.UIFixes.Value)
             {
                 var GameMenuVideo = GameObject.Find("GameMainUI/VideoUI/Player").GetComponent<RectTransform>();
                 GameMenuVideo.localScale = new Vector3(1 / AspectMultiplier, 1, 1);
