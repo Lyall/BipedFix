@@ -93,9 +93,10 @@ namespace BipedFix
         private static readonly int VSyncFrames = Plugin.ToggleVSync.Value ? 1 : 0;
         public static float DefaultAspectRatio = 1.77777777778f; // 1920/1080 Based on DefaultReferenceResolution that is hardcoded.
         public static float NewAspectRatio = Plugin.DesiredResolutionX.Value / Plugin.DesiredResolutionY.Value;
-        public static float AspectMultiplier = NewAspectRatio / DefaultAspectRatio;
+        public static float AspectMultiplier = NewAspectRatio / DefaultAspectRatio ;
         public static Vector2 DefaultReferenceResolution = new(1920, 1080);
-        public static Vector2 NewReferenceResolution = new(1920 * AspectMultiplier, 1080);
+        public static Vector2 NewReferenceResolution = new(AspectMultiplier * 1920 , 1080);
+
 
         // Set screen resolution
         [HarmonyPatch(typeof(Biped.ScreenResolutionUtils), nameof(Biped.ScreenResolutionUtils.ApplyResolution))]
