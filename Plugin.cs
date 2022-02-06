@@ -16,7 +16,7 @@ namespace BipedFix
 
         public static ConfigEntry<bool> HintBubbleFix;
         public static ConfigEntry<bool> CutsceneFix;
-        public static ConfigEntry<bool> SavingDialogFix;
+        public static ConfigEntry<bool> GameUIFix;
         public static ConfigEntry<bool> TitleVideoFix;
         public static ConfigEntry<bool> GameMenuVideoFix;
         public static ConfigEntry<int> UnlockedFPS;
@@ -57,10 +57,10 @@ namespace BipedFix
                                 true,
                                 "Fixes cutscene letterboxing wider at wider than 16:9 aspect ratios.");
             
-            SavingDialogFix = Config.Bind("Tweaks",
-                                "SavingDialogFix",
+            GameUIFix = Config.Bind("Tweaks",
+                                "GameUIFix",
                                 true,
-                                "Fixes saving dialog box at wider than 16:9 aspect ratios.");
+                                "Fixes game UI at wider than 16:9 aspect ratios.");
 
             TitleVideoFix = Config.Bind("Tweaks",
                                 "TitleVideoAspectRatioFix",
@@ -144,10 +144,22 @@ namespace BipedFix
             {
                 var canvasScaler = GameObject.Find("DialogCanvas(Clone)").GetComponent<CanvasScaler>();
                 canvasScaler.referenceResolution = NewReferenceResolution;
-                Plugin.Log.LogInfo($"Changed hint bubble canvas reference resolution to wide {canvasScaler.referenceResolution}");  
+                Plugin.Log.LogInfo($"Changed hint bubble canvas reference resolution to {canvasScaler.referenceResolution}");  
             }
         }
 
+        // Fix game UI
+        [HarmonyPatch(typeof(Biped.GameMainUI), "Awake")]
+        [HarmonyPostfix]
+        public static void UpdateGameMainUIReferenceResolution(Biped.GameMainUI __instance)
+        {
+            if (Plugin.GameUIFix.Value)
+            {
+                var canvasScaler = GameObject.Find("GameMainUI").GetComponent<CanvasScaler>();
+                canvasScaler.referenceResolution = NewReferenceResolution;
+                Plugin.Log.LogInfo($"Changed game UI reference resolution to {canvasScaler.referenceResolution}");
+            }
+        }
         // Fix cinematic letterboxing
         [HarmonyPatch(typeof(Biped.GameMainUI), "Awake")]
         [HarmonyPostfix]
@@ -168,18 +180,18 @@ namespace BipedFix
         {
             if (Plugin.SavingDialogFix.Value)
             {
-                var BG_Saving = GameObject.Find("GameMainUI/GamingUICoopMode/Saving/Prefab_Saving/BG_Saving").GetComponent<CanvasRenderer>();
-                BG_Saving.cull = true;
-                var Img_Circle_Big = GameObject.Find("GameMainUI/GamingUICoopMode/Saving/Prefab_Saving/Img_Circle_Big").GetComponent<CanvasRenderer>();
-                Img_Circle_Big.cull = true;
-                var Img_Circle_Small = GameObject.Find("GameMainUI/GamingUICoopMode/Saving/Prefab_Saving/Img_Circle_Small").GetComponent<CanvasRenderer>();
-                Img_Circle_Small.cull = true;
-                var Img_CircleBG = GameObject.Find("GameMainUI/GamingUICoopMode/Saving/Prefab_Saving/Img_CircleBG").GetComponent<CanvasRenderer>();
-                Img_CircleBG.cull = true;
-                var Text_Saved = GameObject.Find("GameMainUI/GamingUICoopMode/Saving/Prefab_Saving/Text_Saved").GetComponent<CanvasRenderer>();
-                Text_Saved.cull = true;
+                var BG_Saving = GameObject.Find("GameMainUI/GamingUICoopMode/Saving/Prefab_Saving/BG_Saving").GetComponent<RectTransform>();
+                BG_Saving.localPosition = new Vector3(-100, 0, 0);   
+                var Img_Circle_Big = GameObject.Find("GameMainUI/GamingUICoopMode/Saving/Prefab_Saving/Img_Circle_Big").GetComponent<RectTransform>();
+                Img_Circle_Big.localPosition = new Vector3(1 * AspectMultiplier, AspectMultiplier, 0); ;
+                var Img_Circle_Small = GameObject.Find("GameMainUI/GamingUICoopMode/Saving/Prefab_Saving/Img_Circle_Small").GetComponent<RectTransform>();
+                Img_Circle_Small.localPosition = new Vector3(1 * AspectMultiplier, AspectMultiplier, 0); ;
+                var Img_CircleBG = GameObject.Find("GameMainUI/GamingUICoopMode/Saving/Prefab_Saving/Img_CircleBG").GetComponent<RectTransform>();
+                Img_CircleBG.localPosition = new Vector3(1 * AspectMultiplier, AspectMultiplier, 0); ;
+                var Text_Saved = GameObject.Find("GameMainUI/GamingUICoopMode/Saving/Prefab_Saving/Text_Saved").GetComponent<RectTransform>();
+                Text_Saved.localPosition = new Vector3(1 * AspectMultiplier, AspectMultiplier, 0); ;
 
-                Plugin.Log.LogInfo("Saving icons culled = " + BG_Saving.cull + Img_Circle_Big.cull + Img_Circle_Small.cull + Img_CircleBG.cull + Text_Saved.cull);
+                Plugin.Log.LogInfo($"Saving icons culled = ");
             }
         }
 
