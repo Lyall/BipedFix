@@ -5,12 +5,13 @@ using BepInEx.Logging;
 using HarmonyLib;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 
 namespace BipedFix
 {
     [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
-    public class Plugin : BaseUnityPlugin
+    public class BipedFix : BaseUnityPlugin
     {
         public static ManualLogSource Log;
 
@@ -66,9 +67,9 @@ namespace BipedFix
     [HarmonyPatch]
     public class Patches
     {
-        private static readonly int VSyncFrames = Plugin.ToggleVSync.Value ? 1 : 0;
+        private static readonly int VSyncFrames = BipedFix.ToggleVSync.Value ? 1 : 0;
         public static float DefaultAspectRatio = 1.77777777778f; // 1920/1080 Based on DefaultReferenceResolution that is hardcoded.
-        public static float NewAspectRatio = Plugin.DesiredResolutionX.Value / Plugin.DesiredResolutionY.Value;
+        public static float NewAspectRatio = BipedFix.DesiredResolutionX.Value / BipedFix.DesiredResolutionY.Value;
         public static float AspectMultiplier = NewAspectRatio / DefaultAspectRatio ;
         public static Vector2 DefaultReferenceResolution = new(1920, 1080);
         public static Vector2 NewReferenceResolution = new(AspectMultiplier * 1920 , 1080);
@@ -79,8 +80,8 @@ namespace BipedFix
         [HarmonyPostfix]
         public static void SetResolution()
         {
-            Screen.SetResolution((int)Plugin.DesiredResolutionX.Value, (int)Plugin.DesiredResolutionY.Value, Plugin.Fullscreen.Value); // No exclusive full screen til Unity 2018.1
-            Plugin.Log.LogInfo($"Screen resolution set to = {(int)Plugin.DesiredResolutionX.Value}x{(int)Plugin.DesiredResolutionY.Value}");
+            Screen.SetResolution((int)BipedFix.DesiredResolutionX.Value, (int)BipedFix.DesiredResolutionY.Value, BipedFix.Fullscreen.Value); // No exclusive full screen til Unity 2018.1
+            BipedFix.Log.LogInfo($"Screen resolution set to = {(int)BipedFix.DesiredResolutionX.Value}x{(int)BipedFix.DesiredResolutionY.Value}");
         }
 
         // Unlock framerate 1
@@ -88,9 +89,9 @@ namespace BipedFix
         [HarmonyPostfix]
         public static void UnlockFramerate1()
         {
-            Application.targetFrameRate = Plugin.UnlockedFPS.Value;
+            Application.targetFrameRate = BipedFix.UnlockedFPS.Value;
             QualitySettings.vSyncCount = VSyncFrames; // Set Vsync status
-            Plugin.Log.LogInfo($"1 - Changed target frame rate to {Application.targetFrameRate}");
+            BipedFix.Log.LogInfo($"1 - Changed target frame rate to {Application.targetFrameRate}");
         }
 
         // Unlock framerate 2
@@ -98,8 +99,8 @@ namespace BipedFix
         [HarmonyPostfix]
         public static void UnlockFramerate2()
         {
-            Application.targetFrameRate = Plugin.UnlockedFPS.Value;
-            Plugin.Log.LogInfo($"2 - Changed target frame rate to {Application.targetFrameRate}");
+            Application.targetFrameRate = BipedFix.UnlockedFPS.Value;
+            BipedFix.Log.LogInfo($"2 - Changed target frame rate to {Application.targetFrameRate}");
         }
 
         // Unlock framerate 3
@@ -107,8 +108,8 @@ namespace BipedFix
         [HarmonyPostfix]
         public static void UnlockFramerate3()
         {
-            Application.targetFrameRate = Plugin.UnlockedFPS.Value;
-            Plugin.Log.LogInfo($"3 - Changed target frame rate to {Application.targetFrameRate}");
+            Application.targetFrameRate = BipedFix.UnlockedFPS.Value;
+            BipedFix.Log.LogInfo($"3 - Changed target frame rate to {Application.targetFrameRate}");
         }
 
         // Fix misaligned hint bubbles
@@ -116,11 +117,11 @@ namespace BipedFix
         [HarmonyPostfix]
         public static void UpdateHintReferenceResolution(Biped.HintBubbleDialogHandler __instance)
         {
-            if (Plugin.UIFixes.Value)
+            if (BipedFix.UIFixes.Value)
             {
                 var canvasScaler = GameObject.Find("DialogCanvas(Clone)").GetComponent<CanvasScaler>();
                 canvasScaler.referenceResolution = NewReferenceResolution;
-                Plugin.Log.LogInfo($"Changed hint bubble canvas reference resolution to {canvasScaler.referenceResolution}");  
+                BipedFix.Log.LogInfo($"Changed hint bubble canvas reference resolution to {canvasScaler.referenceResolution}");  
             }
         }
 
@@ -129,11 +130,11 @@ namespace BipedFix
         [HarmonyPostfix]
         public static void UpdateGameMainUIReferenceResolution()
         {
-            if (Plugin.UIFixes.Value)
+            if (BipedFix.UIFixes.Value)
             {
                 var canvasScaler = GameObject.Find("GameMainUI").GetComponent<CanvasScaler>();
                 canvasScaler.referenceResolution = NewReferenceResolution;
-                Plugin.Log.LogInfo($"Changed game UI reference resolution to {canvasScaler.referenceResolution}");
+                BipedFix.Log.LogInfo($"Changed game UI reference resolution to {canvasScaler.referenceResolution}");
             }
         }
 
@@ -142,11 +143,11 @@ namespace BipedFix
         [HarmonyPostfix]
         public static void MoveSavingUI()
         {
-            if (Plugin.UIFixes.Value)
+            if (BipedFix.UIFixes.Value)
             {
                 var Prefab_Saving = GameObject.Find("GameMainUI/GamingUICoopMode/Saving/Prefab_Saving").GetComponent<RectTransform>();
                 Prefab_Saving.localPosition = new Vector3(749 / AspectMultiplier, -104, 0);
-                Plugin.Log.LogInfo($"Saving local pos changed to = {Prefab_Saving.localPosition}");
+                BipedFix.Log.LogInfo($"Saving local pos changed to = {Prefab_Saving.localPosition}");
             }
         }
 
@@ -155,11 +156,11 @@ namespace BipedFix
         [HarmonyPostfix]
         public static void AdjustLetterboxing()
         {
-            if (Plugin.UIFixes.Value)
+            if (BipedFix.UIFixes.Value)
             {
                 var CinematicUI = GameObject.Find("GameMainUI/GamingUICoopMode/CinematicUI").GetComponent<RectTransform>();
                 CinematicUI.localScale = new Vector3(1 * AspectMultiplier, 1, 1); // Multiply letterbox 
-                Plugin.Log.LogInfo($"Cutscene local scale set to = {CinematicUI.localScale}");
+                BipedFix.Log.LogInfo($"Cutscene local scale set to = {CinematicUI.localScale}");
             }    
         }
 
@@ -168,11 +169,11 @@ namespace BipedFix
         [HarmonyPostfix]
         public static void AdjustUIMask()
         {
-            if (Plugin.UIFixes.Value)
+            if (BipedFix.UIFixes.Value)
             {
                 var UI_Mask = GameObject.Find("GameMainUI/GamingUICoopMode/UI_Mask").GetComponent<RectTransform>();
                 UI_Mask.localScale = new Vector3(1 * AspectMultiplier, 1, 1);
-                Plugin.Log.LogInfo($"UI_Mask local scale set to = {UI_Mask.localScale}");
+                BipedFix.Log.LogInfo($"UI_Mask local scale set to = {UI_Mask.localScale}");
             }
         }
 
@@ -181,11 +182,11 @@ namespace BipedFix
         [HarmonyPostfix]
         public static void TitleVideoAR()
         {
-            if (Plugin.UIFixes.Value)
+            if (BipedFix.UIFixes.Value)
             {
                 var TitleVideoPlayer = GameObject.Find("TitleVideo/Player").GetComponent<RectTransform>();
                 TitleVideoPlayer.localScale = new Vector3(1 / AspectMultiplier, 1, 1);
-                Plugin.Log.LogInfo($"Title video local scale set to = {TitleVideoPlayer.localScale}");
+                BipedFix.Log.LogInfo($"Title video local scale set to = {TitleVideoPlayer.localScale}");
             }
         }
 
@@ -194,11 +195,11 @@ namespace BipedFix
         [HarmonyPostfix]
         public static void GameMenuVideoAR()
         {
-            if (Plugin.UIFixes.Value)
+            if (BipedFix.UIFixes.Value)
             {
                 var GameMenuVideo = GameObject.Find("GameMainUI/VideoUI/Player").GetComponent<RectTransform>();
                 GameMenuVideo.localScale = new Vector3(1 / AspectMultiplier, 1, 1);
-                Plugin.Log.LogInfo($"Game menu video local scale set to = {GameMenuVideo.localScale}");
+                BipedFix.Log.LogInfo($"Game menu video local scale set to = {GameMenuVideo.localScale}");
             }   
         }
     }

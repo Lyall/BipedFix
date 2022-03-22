@@ -6,8 +6,6 @@ This BepinEx plugin for the game Biped adds support for:
 - Setting an arbitrary resolution.
 
 ## Installation
-- Grab the latest x64 version of BepinEx from https://github.com/BepInEx/BepInEx/releases
-- Extract the BepinEx zip to the main Biped game directory (for example - "steamapps/common/Biped").
 - Grab the latest release of BipedFix from https://github.com/Lyall/BipedFix/releases
 - Extract the BipedFix zip in to the Biped game directory.
 - Run Biped once to generate a config file located at Biped/BepinEx/config/BipedFix.cfg
