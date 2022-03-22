@@ -28,3 +28,6 @@ Please report any issues you see and I'll do my best to fix them.
 
 ![20220205175006_1](https://user-images.githubusercontent.com/695941/152652991-f52c5bf7-12d3-4513-b257-f3ffc080a116.jpg)
 32:9 Ultrawide Gameplay
+
+## Credits
+- [BepinEx](https://github.com/BepInEx/BepInEx) is licensed under the GNU Lesser General Public License v2.1.
