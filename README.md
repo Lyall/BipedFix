@@ -7,7 +7,7 @@ This BepinEx plugin for the game Biped adds support for:
 
 ## Installation
 - Grab the latest release of BipedFix from https://github.com/Lyall/BipedFix/releases
-- Extract the contents of **BipedFix zip** in to the Biped game directory.
+- Extract the contents of **BipedFix zip** in to the game directory (e.g. steamapps/common/Biped).
 - Run Biped once to generate a config file located at Biped/BepinEx/config/BipedFix.cfg
 
 ## Configuration
