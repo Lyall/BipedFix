@@ -1,6 +1,7 @@
 # BipedFix - Ultrawide, FPS Unlock and more
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/W7W01UAI9)<br/>
-[![Github All Releases](https://img.shields.io/github/downloads/Lyall/BipedFix/total.svg)]()</br>
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/W7W01UAI9)</br>
+[![Github All Releases](https://img.shields.io/github/downloads/Lyall/BipedFix/total.svg)]()
+
 This BepinEx plugin for the game Biped adds support for:
 - Playing the game in any ultrawide aspect ratios such as 21:9, 32:9 or even higher.
 - Unlocked FPS and forcing vsync.
